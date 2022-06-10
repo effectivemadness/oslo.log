@@ -400,6 +400,11 @@ class ContextFormatter(logging.Formatter):
         self.project = kwargs.pop('project', 'unknown')
         self.version = kwargs.pop('version', 'unknown')
         self.conf = kwargs.pop('config', _CONF)
+        # get hostname using socket
+        try:
+            self.hostname = socket.gethostname()
+        except socket.error:
+            self.hostname = None
 
         logging.Formatter.__init__(self, *args, **kwargs)
 
@@ -408,6 +413,8 @@ class ContextFormatter(logging.Formatter):
         # store project info
         record.project = self.project
         record.version = self.version
+        # add hostname to record
+        record.hostname = self.hostname
 
         # FIXME(dims): We need a better way to pick up the instance
         # or instance_uuid parameters from the kwargs from say
